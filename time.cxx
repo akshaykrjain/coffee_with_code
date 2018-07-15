@@ -64,7 +64,8 @@ std::string generate(int A, int B, int C, int D) {
 
 main()
 {
-	int a[100],i,HMS[6];
+	//int a[100],i,HMS[6];
+	int a[100],i;
 	//printf("enter:");
 	for(i=0;i<4;i++)	
 	{
