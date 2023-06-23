@@ -1,20 +1,35 @@
-FROM public.ecr.aws/ubuntu/ubuntu:22.04
+# Use a smaller base image
+FROM python:3-alpine as builder
 
-# Install dependencies
-RUN apt-get update && \
-    apt-get -y install apache2
+# Set the working directory in the builder stage
+WORKDIR /app
 
-# Install apache and write hello world message
-RUN echo '<h2>Hello World! This app is stored in Github Packages :)</h2>' >> /var/www/html/index.html
-RUN echo '<h3>https://aws.amazon.com/ecr/)</h3>' >> /var/www/html/index.html
+# Copy the Python script into the builder stage
+COPY counter.py .
 
-# Configure apache
-RUN echo '. /etc/apache2/envvars' > /root/run_apache.sh && \
-    echo 'mkdir -p /var/run/apache2' >> /root/run_apache.sh && \
-    echo 'mkdir -p /var/lock/apache2' >> /root/run_apache.sh && \ 
-    echo '/usr/sbin/apache2 -D FOREGROUND' >> /root/run_apache.sh && \ 
-    chmod 755 /root/run_apache.sh
+# Install any necessary dependencies
+# (Note: There are no dependencies for this specific program)
+# If your program requires additional packages, add them here using pip
 
-EXPOSE 80
+# Install virtualenv
+RUN pip install virtualenv
 
-CMD /root/run_apache.sh
+# Create and activate a virtual environment
+RUN virtualenv /venv
+ENV PATH="/venv/bin:$PATH"
+
+# Install dependencies in the virtual environment
+RUN pip install --no-cache-dir <your-dependencies>
+
+# Switch to a new stage and use a smaller base image
+FROM python:3-alpine
+
+# Set the working directory in the final stage
+WORKDIR /app
+
+# Copy the program and the virtual environment from the builder stage
+COPY --from=builder /app/counter.py /app/
+COPY --from=builder /venv /venv
+
+# Set the command to run the Python script using the virtual environment
+CMD ["/venv/bin/python", "-u", "counter.py"]
