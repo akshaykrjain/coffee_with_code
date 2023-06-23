@@ -19,8 +19,7 @@ RUN virtualenv /venv
 ENV PATH="/venv/bin:$PATH"
 
 # Install dependencies in the virtual environment
-RUN pip install --no-cache-dir <your-dependencies>
-
+RUN pip install --no-cache-dir boto3
 # Switch to a new stage and use a smaller base image
 FROM python:3-alpine
 
