@@ -1,24 +1,26 @@
 import logging
 import time
 import random
-import json
 
 
-# Function to generate random Docker-like container names
+# Function to generate random Docker-like user names
 def generate_user_name():
     adjectives = ["nostalgic", "focused", "vibrant", "serene", "mystic"]
     animals = ["swan", "turing", "giraffe", "elephant", "parrot"]
     return f"{random.choice(adjectives)}_{random.choice(animals)}"
 
 
+# Create a logger instance
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 # Configure logging with JSON formatter
-logging.basicConfig(format="%(message)s", level=logging.INFO)
 log_formatter = logging.Formatter(
     '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "user": "%(user)s", "message": "%(message)s"}'
 )
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(log_formatter)
-logging.getLogger().addHandler(console_handler)
+logger.addHandler(console_handler)
 
 counter = 1
 
@@ -33,8 +35,8 @@ while True:
     user_name = generate_user_name()
     log_message = f"hello from my awesome app..#{counter}"
 
-    # Log message with container name
-    logging.log(log_level, log_message, extra={"user": user_name})
+    # Log message with user name
+    logger.log(log_level, log_message, extra={"user": user_name})
 
     counter += 1
     if counter > 100:
